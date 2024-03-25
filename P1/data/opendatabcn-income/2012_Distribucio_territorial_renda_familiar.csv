@@ -1,0 +1,75 @@
+,Codi_Districte,Nom_Districte,Índex RFD Barcelona = 100,Nom_Barri,Codi_Barri,Població,_id,Any
+0,1,Ciutat Vella,65.4,el Raval,1,49844,1,2012
+1,1,Ciutat Vella,99.7,el Barri Gòtic,2,16754,2,2012
+2,1,Ciutat Vella,69.0,la Barceloneta,3,15745,3,2012
+3,1,Ciutat Vella,89.3,"Sant Pere, Santa Caterina i la Ribera",4,22873,4,2012
+4,2,Eixample,98.0,el Fort Pienc,5,32225,5,2012
+5,2,Eixample,95.3,la Sagrada Família,6,52007,6,2012
+6,2,Eixample,150.1,la Dreta de l'Eixample,7,43436,7,2012
+7,2,Eixample,119.2,l'Antiga Esquerra de l'Eixample,8,41887,8,2012
+8,2,Eixample,105.9,la Nova Esquerra de l'Eixample,9,57760,9,2012
+9,2,Eixample,94.8,Sant Antoni,10,38277,10,2012
+10,3,Sants-Montjuïc,80.7,el Poble Sec,11,41380,11,2012
+11,3,Sants-Montjuïc,45.9,la Marina del Prat Vermell,12,1046,12,2012
+12,3,Sants-Montjuïc,67.4,la Marina de Port,13,30256,13,2012
+13,3,Sants-Montjuïc,69.7,la Font de la Guatlla,14,10236,14,2012
+14,3,Sants-Montjuïc,72.1,Hostafrancs,15,16094,15,2012
+15,3,Sants-Montjuïc,72.9,la Bordeta,16,18498,16,2012
+16,3,Sants-Montjuïc,74.3,Sants - Badal,17,24574,17,2012
+17,3,Sants-Montjuïc,85.2,Sants,18,41530,18,2012
+18,4,Les Corts,129.6,les Corts,19,46698,19,2012
+19,4,Les Corts,109.3,la Maternitat i Sant Ramon,20,23762,20,2012
+20,4,Les Corts,240.7,Pedralbes,21,11778,21,2012
+21,5,Sarrià-Sant Gervasi,177.5,"Vallvidrera, el Tibidabo i les Planes",22,4398,22,2012
+22,5,Sarrià-Sant Gervasi,189.8,Sarrià,23,24362,23,2012
+23,5,Sarrià-Sant Gervasi,215.0,les Tres Torres,24,16008,24,2012
+24,5,Sarrià-Sant Gervasi,187.9,Sant Gervasi - la Bonanova,25,24552,25,2012
+25,5,Sarrià-Sant Gervasi,176.0,Sant Gervasi - Galvany,26,46466,26,2012
+26,5,Sarrià-Sant Gervasi,138.2,el Putxet i el Farró,27,29618,27,2012
+27,6,Gràcia,113.7,Vallcarca i els Penitents,28,15521,28,2012
+28,6,Gràcia,92.9,el Coll,29,7222,29,2012
+29,6,Gràcia,117.4,la Salut,30,13196,30,2012
+30,6,Gràcia,102.6,la Vila de Gràcia,31,51025,31,2012
+31,6,Gràcia,98.6,el Camp d'en Grassot i Gràcia Nova,32,34582,32,2012
+32,7,Horta-Guinardó,85.3,el Baix Guinardó,33,25768,33,2012
+33,7,Horta-Guinardó,81.4,Can Baró,34,8990,34,2012
+34,7,Horta-Guinardó,89.8,el Guinardó,35,35697,35,2012
+35,7,Horta-Guinardó,107.5,la Font d'en Fargues,36,9498,36,2012
+36,7,Horta-Guinardó,58.5,el Carmel,37,32323,37,2012
+37,7,Horta-Guinardó,71.3,la Teixonera,38,11410,38,2012
+38,7,Horta-Guinardó,79.6,Sant Genís dels Agudells,39,6922,39,2012
+39,7,Horta-Guinardó,76.4,Montbau,40,5090,40,2012
+40,7,Horta-Guinardó,90.3,la Vall d'Hebron,41,5545,41,2012
+41,7,Horta-Guinardó,78.5,la Clota,42,456,42,2012
+42,7,Horta-Guinardó,80.0,Horta,43,26816,43,2012
+43,8,Nou Barris,71.7,Vilapicina i la Torre Llobeta,44,25584,44,2012
+44,8,Nou Barris,60.5,Porta,45,24772,45,2012
+45,8,Nou Barris,56.4,el Turó de la Peira,46,15428,46,2012
+46,8,Nou Barris,53.1,Can Peguera,47,2242,47,2012
+47,8,Nou Barris,56.1,la Guineueta,48,15143,48,2012
+48,8,Nou Barris,61.1,Canyelles,49,7144,49,2012
+49,8,Nou Barris,52.8,les Roquetes,50,16018,50,2012
+50,8,Nou Barris,49.5,Verdun,51,12407,51,2012
+51,8,Nou Barris,60.0,la Prosperitat,52,26515,52,2012
+52,8,Nou Barris,38.9,la Trinitat Nova,53,7692,53,2012
+53,8,Nou Barris,52.4,Torre Baró,54,2178,54,2012
+54,8,Nou Barris,37.5,Ciutat Meridiana,55,10709,55,2012
+55,8,Nou Barris,52.6,Vallbona,56,1329,56,2012
+56,9,Sant Andreu,52.2,la Trinitat Vella,57,10487,57,2012
+57,9,Sant Andreu,52.4,Baró de Viver,58,2393,58,2012
+58,9,Sant Andreu,67.3,el Bon Pastor,59,12990,59,2012
+59,9,Sant Andreu,77.6,Sant Andreu,60,56204,60,2012
+60,9,Sant Andreu,72.9,la Sagrera,61,29038,61,2012
+61,9,Sant Andreu,72.3,el Congrés i els Indians,62,14112,62,2012
+62,9,Sant Andreu,77.0,Navas,63,21728,63,2012
+63,10,Sant Martí,81.2,el Camp de l'Arpa del Clot,64,38232,64,2012
+64,10,Sant Martí,78.2,el Clot,65,27201,65,2012
+65,10,Sant Martí,88.9,el Parc i la Llacuna del Poblenou,66,14147,66,2012
+66,10,Sant Martí,146.6,la Vila Olímpica del Poblenou,67,9322,67,2012
+67,10,Sant Martí,89.8,el Poblenou,68,32816,68,2012
+68,10,Sant Martí,127.4,Diagonal Mar i el Front Marítim del Poblenou,69,12701,69,2012
+69,10,Sant Martí,52.4,el Besòs i el Maresme,70,23732,70,2012
+70,10,Sant Martí,80.4,Provençals del Poblenou,71,19952,71,2012
+71,10,Sant Martí,63.5,Sant Martí de Provençals,72,26152,72,2012
+72,10,Sant Martí,56.8,la Verneda i la Pau,73,29201,73,2012
+73,99,No consta,-,No consta,99,145,74,2012

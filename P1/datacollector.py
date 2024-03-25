@@ -17,14 +17,14 @@ urls = {'2017': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datas
 
 # urls= {'2017': "https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=e7206797-e57b-4ded-8c6c-62e9b4cb54f7"}
 
-folder = r"C:\Users\Silvia\OneDrive - Universitat Politècnica de Catalunya\Escritorio\UPC\MASTER DS\1B\BDM\P1\input1"
+folder = r"C:\Users\Silvia\OneDrive - Universitat Politècnica de Catalunya\Escritorio\UPC\MASTER DS\1B\BDM\P1\data\opendatabcn-income"
 
 for year in urls.keys():
     response = requests.get(urls[year])
-    df = pd.read_json(io.StringIO(response.content.decode('utf-8'))) #
+    df = pd.read_json(io.StringIO(response.content.decode('utf-8')))
     #print(df.loc['records','result'])
 
-    df_json = pd.DataFrame(df.loc['records','result'])
-    json = df_json.to_json(os.path.join(folder, year+'.json'), orient='records')
+    df_result = pd.DataFrame(df.loc['records','result'])
+    json = df_result.to_csv(os.path.join(folder, year+'_Distribucio_territorial_renda_familiar.csv'))
 
-    print(df_json)
+    print(df_result)

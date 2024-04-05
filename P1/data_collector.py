@@ -3,31 +3,31 @@ import os
 import io
 import pandas as pd
 from hdfs import InsecureClient
-from dotenv import load_dotenv
 
-def extract_open_data_bcn_income(urls):
+def extract_open_data_bcn_income(data_folder, urls):
     if not os.path.exists(data_folder):
         os.makedirs(data_folder)
 
-    dfs = {}
-
+    paths = []
     for year in urls.keys():
         df = extract_open_data_bcn_datasets(urls[year])
-        dfs[year+'_Distribucio_territorial_renda_familiar.parquet'] = df
-        # .to_csv(os.path.join(data_folder, year+'_Distribucio_territorial_renda_familiar.csv'))
+        #dfs[year+'_Distribucio_territorial_renda_familiar.parquet'] = df
+        path = 'income/'+year+'_Distribucio_territorial_renda_familiar.parquet'
+        df.to_parquet(os.path.join(data_folder, path))
+        paths.append(path)
 
-    return dfs
+    return paths
 
-def extract_open_data_bcn_elections(data_folder):    
-    if not os.path.exists(data_folder):
-        os.makedirs(data_folder)
+def extract_open_data_bcn_elections(data_folder, url):    
+    if not os.path.exists(data_folder+'/elections'):
+        os.makedirs(data_folder+'/elections')
 
-    file_name = '2023_07_23_Eleccions_Congres_Diputats'
+    path = 'elections/2023_07_23_Eleccions_Congres_Diputats.parquet'
 
     df = extract_open_data_bcn_datasets(url)
-    # .to_csv(os.path.join(data_folder, '2023_07_23_Eleccions_Congres_Diputats.csv'))
+    df.to_parquet(os.path.join(data_folder, path))
 
-    return {file_name, df}
+    return [path]
 
 def extract_open_data_bcn_datasets(url):
     response = requests.get(url)
@@ -36,12 +36,12 @@ def extract_open_data_bcn_datasets(url):
     return df_result
 
 
-def create_hdfs(hdfs_host, hdfs_port, hdfs_user, temp_landing):
+def create_hdfs(hdfs_host, hdfs_port, hdfs_user, temp_landing_dir):
     try:
         client = InsecureClient(f'http://{hdfs_host}:{hdfs_port}', user=hdfs_user)
         print(f"Connection to HDFS has been established successfully.")
-        if client.status(temp_landing, strict=False) is None:
-            client.makedirs(temp_landing)
+        if client.status(temp_landing_dir, strict=False) is None:
+            client.makedirs(temp_landing_dir)
         
         return client
 
@@ -51,13 +51,13 @@ def create_hdfs(hdfs_host, hdfs_port, hdfs_user, temp_landing):
         return None
 
 
-def upload_file_hdfs(hdfs_dir, file_name, df):
+def upload_file_hdfs(client, temp_landing_dir, local_path, file_name):
     print('hola')
-    #df.to_parquet(os.path.join(hdfs_dir, file_name))
+    client.upload(temp_landing_dir + file_name, local_path)
 
 
 if __name__ == "__main__":
-    #data_folder = r"C:\Users\Silvia\OneDrive - Universitat Politècnica de Catalunya\Escritorio\UPC\MASTER DS\1B\BDM\P1\data"
+    local_data_folder = "./data"
     urls_income = {'2017': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=e7206797-e57b-4ded-8c6c-62e9b4cb54f7',
             '2016': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=1d9ff171-6f23-45c1-b02f-203b0589f08a',
             '2015': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=bb4de997-cdf9-43ad-98c6-cc3a3e4d4f07',
@@ -70,20 +70,22 @@ if __name__ == "__main__":
             '2008': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=2c178800-917e-4b59-9e4e-29da232fb26f',
             '2007': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=935b8e2f-996f-4829-8586-c7ddfcb9ba18'}
     url_elections = "https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=e8fce35e-46b9-429e-a29f-945c33a3a8ef"
-    # load_dotenv()
-    temp_landing = "" #os.getenv('TEMPORAL_LANDING_DIR_PATH')
-    hdfs_host = "10.4.41.48" # os.getenv('HDFS_HBASE_HOST')
-    hdfs_port = "9870" #os.getenv('HDFS_PORT')
-    hdfs_user = "bdm" #os.getenv('HDFS_USER')
 
-    dict_income = extract_open_data_bcn_income(urls_income)
-    dict_election = extract_open_data_bcn_elections(url_elections)
+    temp_landing_dir = "/temporal_landing"
+    hdfs_host = "10.4.41.48"
+    hdfs_port = "9870"
+    hdfs_user = "bdm"
 
-    hdfs_client = create_hdfs(hdfs_host, hdfs_port, hdfs_user, temp_landing)
+    paths_income = extract_open_data_bcn_income(local_data_folder, urls_income)
+    paths_elections = extract_open_data_bcn_elections(local_data_folder, url_elections)
+
+    hdfs_client = create_hdfs(hdfs_host, hdfs_port, hdfs_user, temp_landing_dir)
 
     if hdfs_client is not None:
-        for key, value in dict_income.items():
-            upload_file_hdfs(temp_landing, key, value)
+        for file_path in paths_income:
+            str = file_path.split('/')
+            file_name = str[len(str-1)]
+            upload_file_hdfs(hdfs_client, temp_landing_dir, file_path, '/income/'+file_name)
 
 
 

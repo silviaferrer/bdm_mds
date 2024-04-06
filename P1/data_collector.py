@@ -5,13 +5,12 @@ import pandas as pd
 from hdfs import InsecureClient
 
 def extract_open_data_bcn_income(data_folder, urls):
-    if not os.path.exists(data_folder):
-        os.makedirs(data_folder)
+    if not os.path.exists(data_folder+'/income'):
+        os.makedirs(data_folder+'/income')
 
     paths = []
     for year in urls.keys():
         df = extract_open_data_bcn_datasets(urls[year])
-        #dfs[year+'_Distribucio_territorial_renda_familiar.parquet'] = df
         path = 'income/'+year+'_Distribucio_territorial_renda_familiar.parquet'
         df.to_parquet(os.path.join(data_folder, path))
         paths.append(path)
@@ -27,14 +26,28 @@ def extract_open_data_bcn_elections(data_folder, url):
     df = extract_open_data_bcn_datasets(url)
     df.to_parquet(os.path.join(data_folder, path))
 
-    return [path]
+    return path
 
 def extract_open_data_bcn_datasets(url):
     response = requests.get(url)
     df = pd.read_json(io.StringIO(response.content.decode('utf-8')))
     df_result = pd.DataFrame(df.loc['records','result'])
+
     return df_result
 
+def extract_idealista(data_folder, source_dir):
+    if not os.path.exists(data_folder+'/idealista'):
+        os.makedirs(data_folder+'/idealista')
+
+    paths = []
+    for json_file in os.listdir(source_dir):
+        df = pd.read_json(source_dir + json_file)
+        file_name = json_file.split('.')[0]
+        path = '/idealista/' + file_name + '.parquet'
+        df.to_parquet(os.path.join('.' + data_folder + path))
+        paths.append(path)
+
+    return paths
 
 def create_hdfs(hdfs_host, hdfs_port, hdfs_user, temp_landing_dir):
     try:
@@ -50,14 +63,19 @@ def create_hdfs(hdfs_host, hdfs_port, hdfs_user, temp_landing_dir):
         print(e)
         return None
 
+def upload_file_hdfs(client, temp_landing_dir, local_path, dataset):
+    try:        
+        str = file_path.split('/')
+        file_name = str[len(str)-1]
+        remote_path = client.upload(temp_landing_dir + dataset + file_name, local_path, overwrite=True)
+        print(f"Uploaded correctly - {remote_path}")
 
-def upload_file_hdfs(client, temp_landing_dir, local_path, file_name):
-    print('hola')
-    client.upload(temp_landing_dir + file_name, local_path)
-
+    except Exception as e:
+        print(f"Error {e} during the upload of the file {file_name}")
 
 if __name__ == "__main__":
-    local_data_folder = "./data"
+    # intialize variables
+    local_data_folder = "/data"
     urls_income = {'2017': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=e7206797-e57b-4ded-8c6c-62e9b4cb54f7',
             '2016': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=1d9ff171-6f23-45c1-b02f-203b0589f08a',
             '2015': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=bb4de997-cdf9-43ad-98c6-cc3a3e4d4f07',
@@ -71,24 +89,27 @@ if __name__ == "__main__":
             '2007': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=935b8e2f-996f-4829-8586-c7ddfcb9ba18'}
     url_elections = "https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=e8fce35e-46b9-429e-a29f-945c33a3a8ef"
 
+    # intialize hdfs variables
     temp_landing_dir = "/temporal_landing"
     hdfs_host = "10.4.41.48"
     hdfs_port = "9870"
     hdfs_user = "bdm"
 
-    paths_income = extract_open_data_bcn_income(local_data_folder, urls_income)
-    paths_elections = extract_open_data_bcn_elections(local_data_folder, url_elections)
+    # extract data
+    local_paths_income = extract_open_data_bcn_income(local_data_folder, urls_income)
+    local_path_elections = extract_open_data_bcn_elections(local_data_folder, url_elections)
+    local_path_idealista = extract_idealista(local_data_folder, '.' + local_data_folder + '/idealista_source/')
 
+    # create hdfs client and makedir
     hdfs_client = create_hdfs(hdfs_host, hdfs_port, hdfs_user, temp_landing_dir)
 
+    # upload files
     if hdfs_client is not None:
-        for file_path in paths_income:
-            str = file_path.split('/')
-            file_name = str[len(str-1)]
-            upload_file_hdfs(hdfs_client, temp_landing_dir, file_path, '/income/'+file_name)
+        for file_path in local_paths_income:
+            upload_file_hdfs(hdfs_client, temp_landing_dir, os.path.join(local_data_folder + '/' + file_path), '/income/')
 
+        upload_file_hdfs(hdfs_client, temp_landing_dir, os.path.join(local_data_folder + '/' + local_path_elections), '/elections/')
 
-
-
-
+        for file_path in local_path_idealista:
+            upload_file_hdfs(hdfs_client, temp_landing_dir, os.path.join(local_data_folder + '/' + file_path), '/idealista/')
 

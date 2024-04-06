@@ -5,28 +5,40 @@ import pandas as pd
 from hdfs import InsecureClient
 
 def extract_open_data_bcn_income(data_folder, urls):
-    if not os.path.exists(data_folder+'/income'):
-        os.makedirs(data_folder+'/income')
+    try:   
+        print('Starting Income dataset extraction') 
+        if not os.path.exists(data_folder+'/income'):
+            os.makedirs(data_folder+'/income')
 
-    paths = []
-    for year in urls.keys():
-        df = extract_open_data_bcn_datasets(urls[year])
-        path = 'income/'+year+'_Distribucio_territorial_renda_familiar.parquet'
+        paths = []
+        for year in urls.keys():
+            df = extract_open_data_bcn_datasets(urls[year])
+            path = 'income/'+year+'_Distribucio_territorial_renda_familiar.parquet'
+            df.to_parquet(os.path.join(data_folder, path))
+            paths.append(path)
+
+        print('Finished correctly Income dataset extraction')
+        return paths
+    except Exception as e:
+        print(f"Error during extraction: {e}")
+        return []
+    
+def extract_open_data_bcn_elections(data_folder, url):
+    try:   
+        print('Starting Elections dataset extraction') 
+        if not os.path.exists(data_folder+'/elections'):
+            os.makedirs(data_folder+'/elections')
+
+        path = 'elections/2023_07_23_Eleccions_Congres_Diputats.parquet'
+
+        df = extract_open_data_bcn_datasets(url)
         df.to_parquet(os.path.join(data_folder, path))
-        paths.append(path)
 
-    return paths
-
-def extract_open_data_bcn_elections(data_folder, url):    
-    if not os.path.exists(data_folder+'/elections'):
-        os.makedirs(data_folder+'/elections')
-
-    path = 'elections/2023_07_23_Eleccions_Congres_Diputats.parquet'
-
-    df = extract_open_data_bcn_datasets(url)
-    df.to_parquet(os.path.join(data_folder, path))
-
-    return path
+        print('Finished correctly Elections dataset extraction') 
+        return path
+    except Exception as e:
+        print(f"Error during extraction: {e}")
+        return ''
 
 def extract_open_data_bcn_datasets(url):
     response = requests.get(url)
@@ -36,19 +48,25 @@ def extract_open_data_bcn_datasets(url):
     return df_result
 
 def extract_idealista(data_folder, source_dir):
-    if not os.path.exists(data_folder+'/idealista'):
-        os.makedirs(data_folder+'/idealista')
+    try:   
+        print('Starting Idealista dataset extraction') 
+        if not os.path.exists(data_folder+'/idealista'):
+            os.makedirs(data_folder+'/idealista')
 
-    paths = []
-    for json_file in os.listdir(source_dir):
-        df = pd.read_json(source_dir + json_file)
-        file_name = json_file.split('.')[0]
-        path = '/idealista/' + file_name + '.parquet'
-        df.to_parquet(os.path.join('.' + data_folder + path))
-        paths.append(path)
+        paths = []
+        for json_file in os.listdir(source_dir):
+            df = pd.read_json(source_dir + json_file)
+            file_name = json_file.split('.')[0]
+            path = '/idealista/' + file_name + '.parquet'
+            df.to_parquet(os.path.join('.' + data_folder + path))
+            paths.append(path)
 
-    return paths
-
+        print('Finished correctly Idealista dataset extraction')
+        return paths
+    except Exception as e:
+        print(f"Error during extraction: {e}")
+        return ''
+    
 def create_hdfs(hdfs_host, hdfs_port, hdfs_user, temp_landing_dir):
     try:
         client = InsecureClient(f'http://{hdfs_host}:{hdfs_port}', user=hdfs_user)

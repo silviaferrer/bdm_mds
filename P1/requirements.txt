@@ -1,0 +1,5 @@
+pandas
+requests
+thriftpy2
+hdfs
+argparse

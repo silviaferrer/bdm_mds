@@ -52,6 +52,6 @@ if __name__ == "__main__":
                 directory,
                 {HBASE_COLUMN_FAMILY: dict()}
             )
-            print(f"Table {directory} created in HBase.")
+        print(f"Table {directory} created in HBase.")
 
         read_from_hdfs(connection, TMP_LANDING_DIR + '/' + directory)

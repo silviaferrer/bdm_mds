@@ -2,7 +2,6 @@ import requests
 import os
 import io
 import pandas as pd
-from hdfs import InsecureClient
 
 # Global variables
 LOCAL_DATA_FOLDER = "/data"
@@ -18,12 +17,6 @@ URLS_INCOME = {'2017': 'https://opendata-ajuntament.barcelona.cat/data/api/actio
         '2008': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=2c178800-917e-4b59-9e4e-29da232fb26f',
         '2007': 'https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=935b8e2f-996f-4829-8586-c7ddfcb9ba18'}
 URL_ELECTIONS = "https://opendata-ajuntament.barcelona.cat/data/api/action/datastore_search?resource_id=e8fce35e-46b9-429e-a29f-945c33a3a8ef"
-
-# Configuration HDFS
-TMP_LANDING_DIR = "/temporal_landing"
-HDFS_HOST = "10.4.41.48"
-HDFS_PORT = "9870"
-HDFS_USER = "bdm"
 
 def extract_open_data_bcn_income(data_folder, urls):
     try:   
@@ -88,23 +81,9 @@ def extract_idealista(data_folder, source_dir):
         print(f"Error during extraction: {e}")
         return ''
     
-def create_hdfs(hdfs_host, hdfs_port, hdfs_user, tmp_landing_dir):
-    try:
-        client = InsecureClient(f'http://{hdfs_host}:{hdfs_port}', user=hdfs_user)
-        print(f"Connection to HDFS has been established successfully.")
-        if client.status(tmp_landing_dir, strict=False) is None:
-            client.makedirs(tmp_landing_dir)
-        
-        return client
-
-    except Exception as e:
-        client.close()
-        print(e)
-        return None
-
 def upload_file_hdfs(client, tmp_landing_dir, local_path, dataset):
     try:        
-        str = file_path.split('/')
+        str = local_path.split('/')
         file_name = str[len(str)-1]
         remote_path = client.upload(tmp_landing_dir + dataset + file_name, local_path, overwrite=True)
         print(f"Uploaded correctly - {remote_path}")
@@ -112,22 +91,19 @@ def upload_file_hdfs(client, tmp_landing_dir, local_path, dataset):
     except Exception as e:
         print(f"Error {e} during the upload of the file {file_name}")
 
-if __name__ == "__main__":
+def main(hdfs_client, tmp_landing_dir):
     # extract data
     local_paths_income = extract_open_data_bcn_income(LOCAL_DATA_FOLDER, URLS_INCOME)
     local_path_elections = extract_open_data_bcn_elections(LOCAL_DATA_FOLDER, URL_ELECTIONS)
     local_path_idealista = extract_idealista(LOCAL_DATA_FOLDER, '.' + LOCAL_DATA_FOLDER + '/idealista_source/')
 
-    # create hdfs client and makedir
-    hdfs_client = create_hdfs(HDFS_HOST, HDFS_PORT, HDFS_USER, TMP_LANDING_DIR)
 
     # upload files
     if hdfs_client is not None:
         for file_path in local_paths_income:
-            upload_file_hdfs(hdfs_client, TMP_LANDING_DIR, os.path.join(LOCAL_DATA_FOLDER + '/' + file_path), '/income/')
+            upload_file_hdfs(hdfs_client, tmp_landing_dir, os.path.join(LOCAL_DATA_FOLDER + '/' + file_path), '/income/')
 
-        upload_file_hdfs(hdfs_client, TMP_LANDING_DIR, os.path.join(LOCAL_DATA_FOLDER + '/' + local_path_elections), '/elections/')
+        upload_file_hdfs(hdfs_client, tmp_landing_dir, os.path.join(LOCAL_DATA_FOLDER + '/' + local_path_elections), '/elections/')
 
         for file_path in local_path_idealista:
-            upload_file_hdfs(hdfs_client, TMP_LANDING_DIR, os.path.join(LOCAL_DATA_FOLDER + '/' + file_path), '/idealista/')
-
+            upload_file_hdfs(hdfs_client, tmp_landing_dir, os.path.join(LOCAL_DATA_FOLDER + '/' + file_path), '/idealista/')
